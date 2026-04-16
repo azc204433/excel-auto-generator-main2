@@ -6,9 +6,9 @@ export interface ThermalMeasurementItem {
   id: string;
   targetName: string; // 측정대상
   voltage: VoltageType;
-  point1: number;
-  point2: number;
-  point3: number;
+  point1: number | null;
+  point2: number | null;
+  point3: number | null;
   maxDiff: number;
   status: MeasurementStatus;
   visualImage?: string; // base64
