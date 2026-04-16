@@ -18,8 +18,10 @@ import {
   Settings2,
   RotateCcw,
   Undo2,
-  History
+  History,
+  Loader2
 } from 'lucide-react';
+import { analyzeThermalImage } from './services/ocrService';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -68,6 +70,70 @@ const getTodayDate = () => {
   return `${year}-${month}-${day}`;
 };
 
+const DEFAULT_SUBSTATION_ITEMS: ThermalMeasurementItem[] = [
+  { id: 's1', targetName: 'HV1 인입케이블 접속점', voltage: '22.9kv', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's2', targetName: 'HV1 LBS 접속점', voltage: '22.9kv', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's3', targetName: 'HV1 LA 접속점', voltage: '22.9kv', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's4', targetName: 'HV2 PF 접속점', voltage: '22.9kv', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's5', targetName: 'HV2 MOF 접속점', voltage: '22.9kv', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's6', targetName: 'HV3 VCB 접속점', voltage: '22.9kv', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's7', targetName: 'HV3 CT 접속점', voltage: '22.9kv', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's8', targetName: 'TR1 200KVA 1차측 접속점', voltage: '22.9kv', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's9', targetName: 'TR1 200KVA 2차측 접속점', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's10', targetName: 'LV1-1 ACB 접속점', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's11', targetName: 'TR2 800KVA 1차측 접속점', voltage: '22.9kv', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's12', targetName: 'TR2 800KVA 2차측 접속점', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's13', targetName: 'LV2-1 ACB 접속점', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's14', targetName: 'TR3 1500KVA 1차측 접속점', voltage: '22.9kv', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's15', targetName: 'TR3 1500KVA 2차측 접속점', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's16', targetName: 'LV3-1 ACB 접속점', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's17', targetName: 'TR4 900KVA 1차측 접속점', voltage: '22.9kv', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's18', targetName: 'TR4 900KVA 2차측 접속점', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's19', targetName: 'LV4-1 ACB 접속점', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's20', targetName: 'TR5 700KVA 1차측 접속점', voltage: '22.9kv', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's21', targetName: 'TR5 700KVA 2차측 접속점', voltage: '220v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 's22', targetName: 'LV5-1 ACB 접속점', voltage: '220v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+];
+
+const DEFAULT_DISTRIBUTION_ITEMS: ThermalMeasurementItem[] = [
+  { id: 'd1', targetName: 'MCC-B1-OAC1', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd2', targetName: 'MCC-B1-OAC2', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd3', targetName: 'MCC-COMP', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd4', targetName: 'L-BI-BO', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd5', targetName: 'L-B1-DI', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd6', targetName: 'L-1-UT', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd7', targetName: 'L-1-KIT', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd8', targetName: 'L-2-APS1', voltage: '220v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd9', targetName: 'L-2-APS2', voltage: '220v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd10', targetName: 'L-2-APS3', voltage: '220v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd11', targetName: 'L-2-APS4', voltage: '220v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd12', targetName: 'L-2-APS5', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd13', targetName: 'L-2-BEAD1', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd14', targetName: 'L-2-BEAD2', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd15', targetName: 'L-2-SPS1', voltage: '220v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd16', targetName: 'L-2-SPS2', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd17', targetName: 'L-2-INC1', voltage: '220v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd18', targetName: 'L-2-INC2', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd19', targetName: 'L-3-IMP', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd20', targetName: 'L-3-UT', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd21', targetName: 'L-3-ETCH1', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd22', targetName: 'L-3-ETCH2', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd23', targetName: 'L-3-VPS', voltage: '220v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd24', targetName: 'L-4-CU', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd25', targetName: 'L-4-MT1', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd26', targetName: 'L-4-MT2', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd27', targetName: 'L-4-UT', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd28', targetName: 'L-5-AC1', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd29', targetName: 'L-5-AC2', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd30', targetName: 'MCC5-OAC1', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd31', targetName: 'MCC5-OAC2', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd32', targetName: 'L-5-ARC', voltage: '220v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd33', targetName: 'L-5-ARC2', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd34', targetName: 'L-5-ARC-AC', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd35', targetName: 'L-5-WTJ', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+  { id: 'd36', targetName: 'L-5-WTJ2', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
+];
+
 const INITIAL_REPORTS: ThermalReport[] = [
   {
     id: '1',
@@ -76,9 +142,7 @@ const INITIAL_REPORTS: ThermalReport[] = [
     inspectionDate: getTodayDate(),
     inspector: '시설환경팀',
     location: '',
-    items: [
-      { id: 'i1', targetName: '', voltage: '22.9kv', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
-    ]
+    items: DEFAULT_SUBSTATION_ITEMS
   },
   {
     id: '2',
@@ -87,9 +151,7 @@ const INITIAL_REPORTS: ThermalReport[] = [
     inspectionDate: getTodayDate(),
     inspector: '시설환경팀',
     location: '',
-    items: [
-      { id: 'i3', targetName: '', voltage: '380v', point1: 0, point2: 0, point3: 0, maxDiff: 0, status: '정상' },
-    ]
+    items: DEFAULT_DISTRIBUTION_ITEMS
   }
 ];
 
@@ -97,15 +159,40 @@ export default function App() {
   // Load initial data from localStorage
   const [reports, setReports] = useState<ThermalReport[]>(() => {
     const saved = localStorage.getItem('thermal_reports');
-    const data: ThermalReport[] = saved ? JSON.parse(saved) : INITIAL_REPORTS;
+    let data: ThermalReport[] = saved ? JSON.parse(saved) : INITIAL_REPORTS;
     
-    // Always update default reports (id 1, 2) to today's date on load/refresh
-    return data.map(report => {
-      if (report.id === '1' || report.id === '2') {
+    // Patch existing default reports (id 1, 2) if they are the old "empty" version
+    // or if they don't have the full list yet. This ensures the user sees the 
+    // requested fixed items even if they had a previous session.
+    data = data.map(report => {
+      if (report.id === '1') {
+        // If it's the substation report and has fewer items than default, update it
+        if (report.items.length <= 1) {
+          return { 
+            ...report, 
+            projectName: '적외선 열화상측정 리스트(수변전실)',
+            items: DEFAULT_SUBSTATION_ITEMS, 
+            inspectionDate: getTodayDate() 
+          };
+        }
+        return { ...report, inspectionDate: getTodayDate() };
+      }
+      if (report.id === '2') {
+        // If it's the distribution report and has fewer items than default, update it
+        if (report.items.length <= 1) {
+          return { 
+            ...report, 
+            projectName: '적외선 열화상측정 리스트(분전반)',
+            items: DEFAULT_DISTRIBUTION_ITEMS, 
+            inspectionDate: getTodayDate() 
+          };
+        }
         return { ...report, inspectionDate: getTodayDate() };
       }
       return report;
     });
+
+    return data;
   });
   
   const [deletedReports, setDeletedReports] = useState<ThermalReport[]>(() => {
@@ -129,6 +216,7 @@ export default function App() {
   const [reportToDelete, setReportToDelete] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadingFor, setUploadingFor] = useState<{ itemId: string, type: 'visual' | 'thermal' } | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // New Report Form State
   const [newReport, setNewReport] = useState<Partial<ThermalReport>>({
@@ -247,71 +335,111 @@ export default function App() {
   };
 
   const handleUpdateItem = (reportId: string, itemId: string, updates: Partial<ThermalMeasurementItem>) => {
-    const updatedReports = reports.map(r => {
-      if (r.id === reportId) {
-        const updatedItems = r.items.map(item => {
-          if (item.id === itemId) {
-            const newItem = { ...item, ...updates };
-            
-            // Auto calculate max difference and status
-            if ('point1' in updates || 'point2' in updates || 'point3' in updates) {
-              const temps = [newItem.point1, newItem.point2, newItem.point3];
-              const max = Math.max(...temps);
-              const min = Math.min(...temps);
-              newItem.maxDiff = Number((max - min).toFixed(1));
+    setReports(prevReports => {
+      const updatedReports = prevReports.map(r => {
+        if (r.id === reportId) {
+          const updatedItems = r.items.map(item => {
+            if (item.id === itemId) {
+              const newItem = { ...item, ...updates };
               
-              if (newItem.maxDiff > 10) newItem.status = '이상';
-              else if (newItem.maxDiff > 5) newItem.status = '요주의';
-              else newItem.status = '정상';
+              // Auto calculate max difference and status
+              if ('point1' in updates || 'point2' in updates || 'point3' in updates) {
+                const temps = [newItem.point1, newItem.point2, newItem.point3];
+                const max = Math.max(...temps);
+                const min = Math.min(...temps);
+                newItem.maxDiff = Number((max - min).toFixed(1));
+                
+                if (newItem.maxDiff > 10) newItem.status = '이상';
+                else if (newItem.maxDiff > 5) newItem.status = '요주의';
+                else newItem.status = '정상';
+              }
+              return newItem;
             }
-            return newItem;
-          }
-          return item;
-        });
-        return { ...r, items: updatedItems };
-      }
-      return r;
-    });
+            return item;
+          });
+          return { ...r, items: updatedItems };
+        }
+        return r;
+      });
 
-    setReports(updatedReports);
-    setSelectedReport(updatedReports.find(r => r.id === reportId) || null);
+      // Sync selected report
+      const updatedSelected = updatedReports.find(r => r.id === reportId);
+      if (updatedSelected) {
+        setSelectedReport(updatedSelected);
+      }
+
+      return updatedReports;
+    });
   };
 
   const handleUpdateReport = (reportId: string, updates: Partial<ThermalReport>) => {
-    const updatedReports = reports.map(r => {
-      if (r.id === reportId) {
-        return { ...r, ...updates };
+    setReports(prevReports => {
+      const updatedReports = prevReports.map(r => {
+        if (r.id === reportId) {
+          return { ...r, ...updates };
+        }
+        return r;
+      });
+      
+      const updatedSelected = updatedReports.find(r => r.id === reportId);
+      if (updatedSelected) {
+        setSelectedReport(updatedSelected);
       }
-      return r;
+      
+      return updatedReports;
     });
-    setReports(updatedReports);
-    setSelectedReport(updatedReports.find(r => r.id === reportId) || null);
   };
 
   const handleDeleteItem = (reportId: string, itemId: string) => {
-    const updatedReports = reports.map(r => {
-      if (r.id === reportId) {
-        return { ...r, items: r.items.filter(i => i.id !== itemId) };
+    setReports(prevReports => {
+      const updatedReports = prevReports.map(r => {
+        if (r.id === reportId) {
+          return { ...r, items: r.items.filter(i => i.id !== itemId) };
+        }
+        return r;
+      });
+      
+      const updatedReport = updatedReports.find(r => r.id === reportId);
+      if (updatedReport) {
+        setSelectedReport(updatedReport);
       }
-      return r;
+      
+      return updatedReports;
     });
-    setReports(updatedReports);
-    const updatedReport = updatedReports.find(r => r.id === reportId);
-    if (updatedReport) setSelectedReport(updatedReport);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !uploadingFor || !selectedReport) return;
 
     const reader = new FileReader();
-    reader.onloadend = () => {
+    reader.onloadend = async () => {
       const base64 = reader.result as string;
+      
+      // Update image first
       handleUpdateItem(
         selectedReport.id, 
         uploadingFor.itemId, 
         uploadingFor.type === 'visual' ? { visualImage: base64 } : { thermalImage: base64 }
       );
+
+      // If it's a thermal image, analyze it
+      if (uploadingFor.type === 'thermal') {
+        setIsAnalyzing(true);
+        try {
+          const thermalData = await analyzeThermalImage(base64);
+          if (thermalData) {
+            handleUpdateItem(selectedReport.id, uploadingFor.itemId, {
+              point1: thermalData.point1,
+              point2: thermalData.point2,
+              point3: thermalData.point3,
+            });
+          }
+        } finally {
+          setIsAnalyzing(false);
+        }
+      }
+      
       setUploadingFor(null);
     };
     reader.readAsDataURL(file);
@@ -464,6 +592,29 @@ export default function App() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* AI Analysis Loading Overlay */}
+      <AnimatePresence>
+        {isAnalyzing && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-white/60 backdrop-blur-sm"
+          >
+            <div className="bg-white p-8 rounded-3xl shadow-2xl border flex flex-col items-center gap-4 text-center max-w-xs">
+              <div className="relative">
+                <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl animate-pulse" />
+                <Loader2 className="w-12 h-12 text-blue-600 animate-spin relative z-10" />
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-slate-900 tracking-tight">이미지 분석 중...</h3>
+                <p className="text-xs text-slate-500 font-bold mt-1">무료 OCR 기능을 사용하여 온도를 추출하고 있습니다.</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-white/90 backdrop-blur-md shadow-sm">
@@ -789,8 +940,8 @@ export default function App() {
                           <TableRow className="hover:bg-transparent border-b">
                             <TableHead className="w-[50px] text-center font-black text-[10px] uppercase">No</TableHead>
                             <TableHead className="font-black text-[10px] uppercase">측정대상 / 전압</TableHead>
-                            <TableHead className="text-center font-black text-[10px] uppercase">온도측정 (P1 / P2 / P3)</TableHead>
-                            <TableHead className="text-center font-black text-[10px] uppercase">최대온도차</TableHead>
+                            <TableHead className="text-center font-black text-[10px] uppercase min-w-[280px]">온도측정 (P1 / P2 / P3)</TableHead>
+                            <TableHead className="text-center font-black text-[10px] uppercase min-w-[100px]">최대온도차</TableHead>
                             <TableHead className="text-center font-black text-[10px] uppercase">판정</TableHead>
                             <TableHead className="font-black text-[10px] uppercase">종합의견</TableHead>
                             <TableHead className="w-[80px]"></TableHead>
@@ -831,9 +982,10 @@ export default function App() {
                                     <Input 
                                       key={p}
                                       type="number"
+                                      step="0.1"
                                       value={item[`point${p}` as keyof ThermalMeasurementItem] as number} 
                                       onChange={(e) => handleUpdateItem(selectedReport.id, item.id, { [`point${p}`]: parseFloat(e.target.value) || 0 })}
-                                      className="h-8 w-14 text-center text-xs font-black border-slate-200 focus:ring-2 focus:ring-blue-500"
+                                      className="h-8 w-20 text-center text-xs font-black border-slate-200 focus:ring-2 focus:ring-blue-500"
                                     />
                                   ))}
                                 </div>
@@ -860,27 +1012,90 @@ export default function App() {
                                 />
                               </TableCell>
                               <TableCell>
-                                <div className="flex items-center justify-end gap-1">
-                                  <Button 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    className="h-8 w-8 text-slate-400 hover:text-blue-600 hover:bg-blue-50"
-                                    onClick={() => {
-                                      setUploadingFor({ itemId: item.id, type: 'visual' });
-                                      fileInputRef.current?.click();
-                                    }}
-                                  >
-                                    <Camera className="w-4 h-4" />
-                                  </Button>
-                                  <Button 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    className="h-8 w-8 text-slate-400 hover:text-rose-600 hover:bg-rose-50"
-                                    onClick={() => handleDeleteItem(selectedReport.id, item.id)}
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </Button>
-                                </div>
+                                  <div className="flex items-center justify-end gap-1">
+                                    <Popover>
+                                      <PopoverTrigger 
+                                        render={
+                                          <Button 
+                                            variant="ghost" 
+                                            size="icon" 
+                                            className={cn(
+                                              "h-8 w-8 transition-all",
+                                              item.thermalImage || item.visualImage ? "text-blue-600 bg-blue-50" : "text-slate-400 hover:text-blue-600 hover:bg-blue-50"
+                                            )}
+                                          >
+                                            <Camera className="w-4 h-4" />
+                                          </Button>
+                                        } 
+                                      />
+                                      <PopoverContent className="w-80 p-4" align="end">
+                                        <div className="space-y-4">
+                                          <div className="grid grid-cols-2 gap-3">
+                                            <div className="space-y-2">
+                                              <p className="text-[10px] font-black text-slate-400 uppercase text-center">열화상 이미지</p>
+                                              <div className="aspect-square rounded-lg border-2 border-dashed border-slate-200 overflow-hidden relative group">
+                                                {item.thermalImage ? (
+                                                  <>
+                                                    <img src={item.thermalImage} alt="Thermal" className="w-full h-full object-cover" />
+                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                                      <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => handleUpdateItem(selectedReport.id, item.id, { thermalImage: undefined, point1: 0, point2: 0, point3: 0 })}>
+                                                        <Trash2 className="w-4 h-4" />
+                                                      </Button>
+                                                    </div>
+                                                  </>
+                                                ) : (
+                                                  <button 
+                                                    className="w-full h-full flex flex-col items-center justify-center gap-1 hover:bg-slate-50 transition-colors"
+                                                    onClick={() => {
+                                                      setUploadingFor({ itemId: item.id, type: 'thermal' });
+                                                      fileInputRef.current?.click();
+                                                    }}
+                                                  >
+                                                    <Plus className="w-5 h-5 text-slate-300" />
+                                                    <span className="text-[10px] font-bold text-slate-400">추가</span>
+                                                  </button>
+                                                )}
+                                              </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                              <p className="text-[10px] font-black text-slate-400 uppercase text-center">실사 이미지</p>
+                                              <div className="aspect-square rounded-lg border-2 border-dashed border-slate-200 overflow-hidden relative group">
+                                                {item.visualImage ? (
+                                                  <>
+                                                    <img src={item.visualImage} alt="Visual" className="w-full h-full object-cover" />
+                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                                      <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => handleUpdateItem(selectedReport.id, item.id, { visualImage: undefined })}>
+                                                        <Trash2 className="w-4 h-4" />
+                                                      </Button>
+                                                    </div>
+                                                  </>
+                                                ) : (
+                                                  <button 
+                                                    className="w-full h-full flex flex-col items-center justify-center gap-1 hover:bg-slate-50 transition-colors"
+                                                    onClick={() => {
+                                                      setUploadingFor({ itemId: item.id, type: 'visual' });
+                                                      fileInputRef.current?.click();
+                                                    }}
+                                                  >
+                                                    <Plus className="w-5 h-5 text-slate-300" />
+                                                    <span className="text-[10px] font-bold text-slate-400">추가</span>
+                                                  </button>
+                                                )}
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </PopoverContent>
+                                    </Popover>
+                                    <Button 
+                                      variant="ghost" 
+                                      size="icon" 
+                                      className="h-8 w-8 text-slate-400 hover:text-rose-600 hover:bg-rose-50"
+                                      onClick={() => handleDeleteItem(selectedReport.id, item.id)}
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  </div>
                               </TableCell>
                             </TableRow>
                           ))}
@@ -916,7 +1131,22 @@ export default function App() {
                                 className="aspect-video rounded-lg border-2 border-dashed border-slate-200 flex flex-col items-center justify-center cursor-pointer hover:bg-white hover:border-blue-400 transition-all overflow-hidden relative group"
                               >
                                 {item.visualImage ? (
-                                  <img src={item.visualImage} className="w-full h-full object-cover" />
+                                  <>
+                                    <img src={item.visualImage} className="w-full h-full object-cover" />
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                      <Button 
+                                        size="icon" 
+                                        variant="destructive" 
+                                        className="h-8 w-8" 
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleUpdateItem(selectedReport.id, item.id, { visualImage: undefined });
+                                        }}
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </Button>
+                                    </div>
+                                  </>
                                 ) : (
                                   <>
                                     <ImageIcon className="w-5 h-5 text-slate-300 mb-1" />
@@ -929,7 +1159,22 @@ export default function App() {
                                 className="aspect-video rounded-lg border-2 border-dashed border-slate-200 flex flex-col items-center justify-center cursor-pointer hover:bg-white hover:border-blue-400 transition-all overflow-hidden relative group"
                               >
                                 {item.thermalImage ? (
-                                  <img src={item.thermalImage} className="w-full h-full object-cover" />
+                                  <>
+                                    <img src={item.thermalImage} className="w-full h-full object-cover" />
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                      <Button 
+                                        size="icon" 
+                                        variant="destructive" 
+                                        className="h-8 w-8" 
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleUpdateItem(selectedReport.id, item.id, { thermalImage: undefined, point1: 0, point2: 0, point3: 0 });
+                                        }}
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </Button>
+                                    </div>
+                                  </>
                                 ) : (
                                   <>
                                     <Thermometer className="w-5 h-5 text-slate-300 mb-1" />
