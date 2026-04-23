@@ -12,7 +12,9 @@ export const generateThermalExcel = async (report: ThermalReport) => {
   // Given the detail, one sheet per item is often cleaner for "reports".
   
   for (const [index, item] of report.items.entries()) {
-    const sheetName = `${item.targetName.substring(0, 20)}_${index + 1}`;
+    // Sanitize targetName for safe worksheet naming (Excel restrictions)
+    const sanitizedTargetName = item.targetName.replace(/[*?:\\/\[\]]/g, '-');
+    const sheetName = `${sanitizedTargetName.substring(0, 20)}_${index + 1}`;
     const worksheet = workbook.addWorksheet(sheetName);
 
     // Page Setup for A4 Printing

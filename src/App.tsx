@@ -74,68 +74,61 @@ const getTodayDate = () => {
 };
 
 const DEFAULT_SUBSTATION_ITEMS: ThermalMeasurementItem[] = [
-  { id: 's1', targetName: 'HV1 인입케이블 접속점', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's2', targetName: 'HV1 LBS 접속점', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's3', targetName: 'HV1 LA 접속점', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's4', targetName: 'HV2 PF 접속점', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's5', targetName: 'HV2 MOF 접속점', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's6', targetName: 'HV3 VCB 접속점', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's7', targetName: 'HV3 CT 접속점', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's8', targetName: 'TR1 200KVA 1차측 접속점', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's9', targetName: 'TR1 200KVA 2차측 접속점', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's10', targetName: 'LV1-1 ACB 접속점', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's11', targetName: 'TR2 800KVA 1차측 접속점', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's12', targetName: 'TR2 800KVA 2차측 접속점', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's13', targetName: 'LV2-1 ACB 접속점', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's14', targetName: 'TR3 1500KVA 1차측 접속점', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's15', targetName: 'TR3 1500KVA 2차측 접속점', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's16', targetName: 'LV3-1 ACB 접속점', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's17', targetName: 'TR4 900KVA 1차측 접속점', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's18', targetName: 'TR4 900KVA 2차측 접속점', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's19', targetName: 'LV4-1 ACB 접속점', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's20', targetName: 'TR5 700KVA 1차측 접속점', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's21', targetName: 'TR5 700KVA 2차측 접속점', voltage: '220v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 's22', targetName: 'LV5-1 ACB 접속점', voltage: '220v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's1', targetName: 'HV1/케이블헤드 접속부', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's2', targetName: 'HV1/LA', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's3', targetName: 'HV1/MOF', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's4', targetName: 'HV1/CT', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's5', targetName: 'TR1/TR 1차', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's6', targetName: 'TR1/TR 2차', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's7', targetName: 'TR2/TR 1차', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's8', targetName: 'TR2/TR 2차', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's9', targetName: 'TR3/TR 1차', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's10', targetName: 'TR3/TR 2차', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's11', targetName: 'TR4/TR 1차', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's12', targetName: 'TR4/TR 2차', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's13', targetName: 'TR1/VCB 1차', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's14', targetName: 'TR2/VCB 1차', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's15', targetName: 'TR3/VCB 1차', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's16', targetName: 'TR4/VCB 1차', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's17', targetName: 'TR1/CT', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's18', targetName: 'TR2/CT', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's19', targetName: 'TR3/CT', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's20', targetName: 'TR4/CT', voltage: '22.9kv', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's21', targetName: 'LV1/ACB 1차 모선', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's22', targetName: 'LV2/ACB 1차 모선', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's23', targetName: 'LV3/ACB 1차 모선', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 's24', targetName: 'LV4/ACB 1차 모선', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
 ];
 
 const DEFAULT_DISTRIBUTION_ITEMS: ThermalMeasurementItem[] = [
-  { id: 'd1', targetName: 'MCC-B1-OAC1', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd2', targetName: 'MCC-B1-OAC2', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd3', targetName: 'MCC-COMP', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd4', targetName: 'L-BI-BO', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd5', targetName: 'L-B1-DI', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd6', targetName: 'L-1-UT', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd7', targetName: 'L-1-KIT', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd8', targetName: 'L-2-APS1', voltage: '220v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd9', targetName: 'L-2-APS2', voltage: '220v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd10', targetName: 'L-2-APS3', voltage: '220v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd11', targetName: 'L-2-APS4', voltage: '220v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd12', targetName: 'L-2-APS5', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd13', targetName: 'L-2-BEAD1', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd14', targetName: 'L-2-BEAD2', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd15', targetName: 'L-2-SPS1', voltage: '220v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd16', targetName: 'L-2-SPS2', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd17', targetName: 'L-2-INC1', voltage: '220v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd18', targetName: 'L-2-INC2', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd19', targetName: 'L-3-IMP', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd20', targetName: 'L-3-UT', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd21', targetName: 'L-3-ETCH1', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd22', targetName: 'L-3-ETCH2', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd23', targetName: 'L-3-VPS', voltage: '220v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd24', targetName: 'L-4-CU', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd25', targetName: 'L-4-MT1', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd26', targetName: 'L-4-MT2', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd27', targetName: 'L-4-UT', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd28', targetName: 'L-5-AC1', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd29', targetName: 'L-5-AC2', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd30', targetName: 'MCC5-OAC1', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd31', targetName: 'MCC5-OAC2', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd32', targetName: 'L-5-ARC', voltage: '220v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd33', targetName: 'L-5-ARC2', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd34', targetName: 'L-5-ARC-AC', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd35', targetName: 'L-5-WTJ', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
-  { id: 'd36', targetName: 'L-5-WTJ2', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd1', targetName: 'UT-6(4F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd2', targetName: 'LP-4-1(4F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd3', targetName: 'LP-4(4F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd4', targetName: 'LP-301(3F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd5', targetName: 'P-5(3F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd6', targetName: 'LPC-M(3F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd7', targetName: 'P-17(B1F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd8', targetName: 'P-14(B1F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd9', targetName: 'P-13(B1F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd10', targetName: 'UT-12-1(B1F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd11', targetName: 'UT-12(B1F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd12', targetName: '공압기 냉각수 판넬(B1F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd13', targetName: 'P-16(B1F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd14', targetName: 'LP-B1(B1F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd15', targetName: 'LP-201(2F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd16', targetName: 'P-3(2F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd17', targetName: 'P-4(2F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd18', targetName: 'LP-2(2F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd19', targetName: 'LP-101(1F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd20', targetName: 'P-1(1F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd21', targetName: 'P-10(1F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd22', targetName: 'P-2(1F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd23', targetName: 'LP-1(1F)', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd24', targetName: 'UT-8', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
+  { id: 'd25', targetName: 'UT-9', voltage: '380v', point1: null, point2: null, point3: null, maxDiff: 0, status: '정상' },
 ];
+
+
 
 const INITIAL_REPORTS: ThermalReport[] = [
   {
@@ -166,7 +159,7 @@ export default function App() {
     
     // Patch reports with their respective default templates on refresh
     data = data.map(report => {
-      const templateStr = localStorage.getItem(`thermal_template_${report.id}`);
+      const templateStr = localStorage.getItem(`thermal_template_v3_${report.id}`);
       
       if (templateStr) {
         try {
@@ -294,7 +287,7 @@ export default function App() {
     const report = reports.find(r => r.id === reportId);
     if (!report) return;
 
-    const templateStr = localStorage.getItem(`thermal_template_${report.id}`);
+    const templateStr = localStorage.getItem(`thermal_template_v3_${report.id}`);
     let defaultItems: ThermalMeasurementItem[] = [];
 
     if (templateStr) {
@@ -464,7 +457,7 @@ export default function App() {
       items: report.items // Save items exactly as they are (including added points and modifications)
     };
 
-    const key = `thermal_template_${report.id}`;
+    const key = `thermal_template_v3_${report.id}`;
     localStorage.setItem(key, JSON.stringify(template));
     alert('현재 구성(항목 리스트, 수정 내용, 추가된 포인트 등)이 기본 템플릿으로 저장되었습니다. 이제 새로고침 시 이 상태로 시작됩니다.');
   };
